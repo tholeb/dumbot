@@ -1,0 +1,40 @@
+{
+    "name": "dumbot",
+    "description": "Dumbot, a bot for dumbs",
+    "version": "0.0.1-alpha",
+    "main": "main.ts",
+    "type": "commonjs",
+    "dependencies": {
+        "@discordjs/builders": "^0.15.0",
+        "@discordjs/rest": "^0.5.0",
+        "axios": "^0.27.2",
+        "discord-api-types": "^0.34.0",
+        "discord.js": "^13.8.0",
+        "dotenv": "^16.0.1",
+        "highcharts-export-server": "^2.1.0",
+        "node-vibrant": "^3.2.1-alpha.1"
+    },
+    "devDependencies": {
+        "eslint": "^8.18.0"
+    },
+    "scripts": {
+        "preinstall": "export ACCEPT_HIGHCHARTS_LICENSE=1",
+        "start": "NODE_ENV=devel node -r dotenv/config main.js --enableServer 1",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "highcharts:build": "node ./node_modules/highcharts-export-server/build.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tholeb/dumbot.git"
+    },
+    "keywords": [
+        "discord",
+        "bot"
+    ],
+    "author": "tholeb",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/tholeb/dumbot/issues"
+    },
+    "homepage": "https://github.com/tholeb/dumbot#readme"
+}
