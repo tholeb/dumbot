@@ -211,7 +211,7 @@ module.exports = {
         });
 
         collector.on('end', collected => {
-            interaction.editReply({ content: `Délai d\'attente dépassé (Vous avez tourné ${collected.length} pages).`, components: [mapLink] });
+            interaction.editReply({ content: `Délai d'attente dépassé (Vous avez tourné ${collected.length} pages).`, components: [mapLink] });
         });
 
 	},
