@@ -10,8 +10,9 @@ const chartDetails = require('../../assets/weatherChart');
 
 const chartExporter = require('highcharts-export-server');
 
+const { time } = require('@discordjs/builders');
+
 // types: https://discordjs.guide/interactions/slash-commands.html#option-types
-// charts: https://www.highcharts.com/demo
 
 module.exports = {
     data: {
@@ -28,46 +29,6 @@ module.exports = {
             'fr': 'Obtenir des informations météorologiques et métriques à partir d\'une localisation donnée',
         },
         options: [
-            /* {
-                type: 3,
-                name: 'provider',
-                name_localizations: {
-                    'en-US': 'provider',
-                    'es-ES': 'proveedor',
-                    'fr': 'fournisseur',
-                },
-                description: 'provider to use for the weather request',
-                description_localizations: {
-                    'en-US': 'provider to use for the weather request',
-                    'es-ES': 'proveedor de datos meteorológicos',
-                    'fr': 'fournisseur de données météorologiques',
-                },
-                choices: [
-                    { name: 'Open Weather Map', value: 'openweathermap' },
-                    // { name: 'Météo France', value: 'meteofrance' },
-                ],
-                required: true,
-            }, */
-/*             {
-                type: 3,
-                name: 'type',
-                name_localizations: {
-                    'en-US': 'type',
-                    'es-ES': 'tipo',
-                    'fr': 'type',
-                },
-                description: 'type of weather data to get',
-                description_localizations: {
-                    'en-US': 'type of weather data to get',
-                    'es-ES': 'tipo de datos meteorológicos a obtener',
-                    'fr': 'type de données météorologiques à obtenir',
-                },
-                choices: [
-                    { name: 'Current', value: 'weather' },
-                    { name: '5 day forecast with 3 hour step', value: 'forecast' },
-                ],
-                required: true,
-            }, */
             {
                 type: 3,
                 name: 'location',
@@ -83,6 +44,7 @@ module.exports = {
                     'fr': 'ville, code postal, etc.',
                 },
                 required: true,
+                autocomplete: true,
             },
             {
                 type: 10,
@@ -214,11 +176,45 @@ module.exports = {
             interaction.editReply({ content: `Délai d'attente dépassé (Vous avez tourné ${collected.length} pages).`, components: [mapLink] });
         });
 
-	},
+    },
+    async autoComplete(client, interaction) {
+        const location = interaction.options.getString('location');
+
+        const options = [];
+        if (location) {
+            options.push({
+				'name': location,
+				'value': location,
+            });
+
+            if (location.length > 3) {
+                const response = await axios.get('https://api.openweathermap.org/data/2.5/find', {
+                    params: {
+                        appid: process.env.OWN_API_KEY,
+                        q: location,
+                        lang: interaction.locale,
+                        sort: 'population',
+                    },
+                }).catch(async (err) => {
+                    console.log(err);
+                    await interaction.editReply({ content: 'erreur', ephemeral: true });
+                });
+
+                for (const i of response.data.list) {
+                    options.push({
+                        name: `${i.name} (${i.sys.country})`,
+                        value: `${i.name}, ${i.sys.country}`,
+                    });
+                }
+
+            }
+            await interaction.respond(options);
+        }
+    },
 };
 
 const makeEmbed = async (item, city, locale, user, page, maxPage) => {
-    const palette = await Vibrant.from(`./assets/icons/${item.weather[0].icon}.png`).getPalette((err, p) => p);
+    const palette = await Vibrant.from(`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`).getPalette((err, p) => p);
 
     const cardinals = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
 
@@ -229,14 +225,14 @@ const makeEmbed = async (item, city, locale, user, page, maxPage) => {
 
     return new MessageEmbed({
         color: palette.Vibrant._rgb,
-        title: `BULLETIN MÉTÉOROLOGIQUE\n<t:${datetime}:f>`,
+        title: `BULLETIN MÉTÉOROLOGIQUE\n${time(datetime, 'f')}`,
         description: `${item.weather[0].description}`,
         author: {
             name: `${user.username}#${user.discriminator}`,
             icon_url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
         },
         thumbnail: {
-            url: 'https://openweathermap.org/img/wn/' + item.weather[0].icon + '@2x.png',
+            url: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
         },
         image: {
             url: 'attachment://weatherChart.png',
