@@ -1,2 +1,3 @@
-# dumbot
-Dumbot, a bot for dumbs
+# WeatherBot
+
+A bot providing weather for a specific location
