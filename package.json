@@ -12,16 +12,21 @@
         "discord.js": "^13.8.0",
         "dotenv": "^16.0.1",
         "highcharts-export-server": "^2.1.0",
-        "node-vibrant": "^3.2.1-alpha.1"
+        "node-vibrant": "^3.2.1-alpha.1",
+        "pino": "^8.1.0",
+        "pino-multi-stream": "^6.0.0"
     },
     "devDependencies": {
-        "eslint": "^8.18.0"
+        "eslint": "^8.18.0",
+        "pino-pretty": "^8.1.0"
     },
     "scripts": {
         "preinstall": "export ACCEPT_HIGHCHARTS_LICENSE=1",
-        "start": "NODE_ENV=devel node -r dotenv/config . --enableServer 1",
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "highcharts:build": "node ./node_modules/highcharts-export-server/build.js"
+        "start": "NODE_ENV=devel node -r dotenv/config . --enableServer 1 | pino-pretty -i pid,hostname -t yyyy-mm-dd HH:MM:ss",
+        "start:prod": "node -r dotenv/config . --enableServer 1",
+        "highcharts:build": "node ./node_modules/highcharts-export-server/build.js",
+        "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+        "lint: fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
     },
     "repository": {
         "type": "git",
