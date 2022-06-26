@@ -50,21 +50,21 @@ const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
 
 client.once('ready', async () => {
     client.logger.info(`${client.user.tag}, ready to serve ${client.users.cache.size} users in ${client.guilds.cache.size} servers.`);
-
+    client.logger.info(`https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=517544070209\n`);
     try {
         // node dev env
         if (process.env.NODE_ENV === 'development') {
             client.logger.info('Running in development mode. Commands are guild-wide.');
 
             client.guilds.cache.map(g => {
-                rest.put(Routes.applicationGuildCommands(process.env.CLIENTID, g.id), { body: c })
+                rest.put(Routes.applicationGuildCommands(client.user.id, g.id), { body: c })
                     .then(() => client.logger.info(`Successfully registered ${c.length} application commands for ${client.guilds.cache.size} guilds.`))
                     .catch(client.logger.error);
             });
         }
         else {
             client.logger.info('Running in production mode. Commands are bot-wide.');
-            rest.put(Routes.applicationCommands(process.env.CLIENTID), { body: c })
+            rest.put(Routes.applicationCommands(client.user.id), { body: c })
                 .then(() => client.logger.info(`Successfully registered ${c.length} application commands.`))
                 .catch(client.logger.error);
         }
