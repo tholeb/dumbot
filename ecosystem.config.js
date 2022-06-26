@@ -14,13 +14,13 @@ module.exports = {
 	],
 	deploy : {
 		production: {
-			key: '~/.ssh/id_rsa.pub',
-			user : 'pi',
-			host : '192.168.1.11',
-			ref  : 'origin/master',
-			repo : 'git@github.com:tholeb/dumbot.git',
-			path : './',
-			'post-deploy' : 'npm install',
+			key: '~/.ssh/id_pm2.pub',
+			user: 'pi',
+			host: '192.168.1.11',
+			ref: 'origin/master',
+			repo: 'git@github.com:tholeb/dumbot.git',
+			path: '/home/pi/dumbot',
+			'post-deploy': 'npm install',
 		},
 	},
 };
