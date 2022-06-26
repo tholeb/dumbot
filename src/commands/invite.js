@@ -19,7 +19,7 @@ module.exports = {
 			description: 'You can invite this bot to your server by using the following link',
 			fields: {
 				name: '\u200b',
-				value: hyperlink('Click here to invite this bot to your server!', `https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=517544070209`),
+				value: hyperlink('Click here to invite this bot to your server!', `https://discordapp.com/oauth2/authorize?client_id=${client.user.id}&scope=bot%20applications.commands&permissions=517544070209`),
 			},
 		};
 
