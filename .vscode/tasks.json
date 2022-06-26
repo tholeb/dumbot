@@ -8,7 +8,7 @@
                 "$eslint-stylish"
             ],
             "label": "npm: start",
-            "detail": "node -r dotenv/config main.js"
+            "detail": "NODE_ENV=devel node -r dotenv/config . --enableServer 1"
         }
     ]
 }
