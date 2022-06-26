@@ -16,15 +16,8 @@ module.exports = {
 					},
 				},
 			},
-			subtitle: {
-				text: 'Source: Open Weather Map',
-			},
 			legend: {
-				enabled: true,
-				layout: 'vertical',
-				floating: true,
-				align: 'left',
-				verticalAlign: 'top',
+				enabled: false,
 				itemStyle: {
 					color: '#FFFFFF',
 				},
