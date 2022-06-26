@@ -23,7 +23,7 @@
     "scripts": {
         "preinstall": "export ACCEPT_HIGHCHARTS_LICENSE=1",
         "start": "NODE_ENV=development node -r dotenv/config . --enableServer 1 | pino-pretty -i pid,hostname -t yyyy-mm-dd HH:MM:ss",
-        "start:prod": "NODE_ENV=production node -r dotenv/config . --enableServer 1 | pino-pretty -i pid,hostname -t yyyy-mm-dd HH:MM:ss",
+        "start:prod": "NODE_ENV=production node -r dotenv/config . --enableServer 1",
         "highcharts:build": "node ./node_modules/highcharts-export-server/build.js",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "lint: fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
