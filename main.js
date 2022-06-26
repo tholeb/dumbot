@@ -53,7 +53,7 @@ client.once('ready', async () => {
 
     try {
         // node dev env
-        if (process.env.NODE_ENV === 'devel') {
+        if (process.env.NODE_ENV === 'development') {
             client.logger.info('Running in development mode. Commands are guild-wide.');
 
             client.guilds.cache.map(g => {
