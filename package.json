@@ -2,7 +2,7 @@
     "name": "dumbot",
     "description": "Dumbot, a bot for dumbs",
     "version": "0.0.1-alpha",
-    "main": "main.ts",
+    "main": "main.js",
     "type": "commonjs",
     "dependencies": {
         "@discordjs/builders": "^0.15.0",
@@ -19,7 +19,7 @@
     },
     "scripts": {
         "preinstall": "export ACCEPT_HIGHCHARTS_LICENSE=1",
-        "start": "NODE_ENV=devel node -r dotenv/config main.js --enableServer 1",
+        "start": "NODE_ENV=devel node -r dotenv/config . --enableServer 1",
         "test": "echo \"Error: no test specified\" && exit 1",
         "highcharts:build": "node ./node_modules/highcharts-export-server/build.js"
     },
