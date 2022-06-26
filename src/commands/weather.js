@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const { MessageActionRow, MessageEmbed, MessageAttachment } = require('discord.js');
 
-const chartDetails = require('../../assets/weatherChart');
+const chartDetails = require('../utils/weatherChart');
 
 const chartExporter = require('highcharts-export-server');
 
@@ -100,6 +100,8 @@ module.exports = {
             await interaction.editReply(err.response.data.message);
         });
 
+        if (!response) return;
+
         const data = [];
         for (const v of response.data.list) {
             data.push([v.dt * 1000, v.main.temp]);
@@ -124,7 +126,7 @@ module.exports = {
 
 			// Save the image to file
 			fs.writeFileSync(outputFile, imageb64, 'base64', function(err) {
-				if (err) console.log(err);
+				if (err) client.logger.info(err);
             });
 
             chartExporter.killPool();
@@ -196,7 +198,7 @@ module.exports = {
                         sort: 'population',
                     },
                 }).catch(async (err) => {
-                    console.log(err);
+                    client.logger.info(err);
                     await interaction.editReply({ content: 'erreur', ephemeral: true });
                 });
 
@@ -285,10 +287,8 @@ const makeEmbed = async (item, city, locale, user, page, maxPage) => {
             },
         ],
         footer: {
-            text: `Page ${page + 1}/${maxPage + 1} `,
-            icon_url: `https://flagcdn.com/16x12/${city.country.toLowerCase()}.png`,
+            text: `Page ${page + 1}/${maxPage + 1} • Source: OpenWeatherMap`,
         },
-        timestamp: new Date(),
     });
 
 };
