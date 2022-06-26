@@ -3,7 +3,6 @@ const path = require('node:path');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { Client, Collection, Intents } = require('discord.js');
-
 const client = new Client({
     intents: [
         Intents.FLAGS.GUILDS,
@@ -20,6 +19,7 @@ const client = new Client({
     ],
 });
 
+client.logger = require('./src/utils/Logger');
 client.commands = new Collection();
 const c = [];
 const commandsPath = path.join(__dirname, 'src/commands');
@@ -49,35 +49,35 @@ for (const file of eventFiles) {
 const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
 
 client.once('ready', async () => {
-    console.log('Ready!');
+    client.logger.info(`${client.user.tag}, ready to serve ${client.users.cache.size} users in ${client.guilds.cache.size} servers.`);
 
     try {
-		console.log('Started refreshing application (/) commands.');
-
         // node dev env
         if (process.env.NODE_ENV === 'devel') {
-            console.log('Running in development mode. Commands are guild-wide.');
+            client.logger.info('Running in development mode. Commands are guild-wide.');
 
             client.guilds.cache.map(g => {
                 rest.put(Routes.applicationGuildCommands(process.env.CLIENTID, g.id), { body: c })
-                    .then(() => console.log(`Successfully registered ${c.length} application commands for ${client.guilds.cache.size} guilds.`))
-                    .catch(console.error);
+                    .then(() => client.logger.info(`Successfully registered ${c.length} application commands for ${client.guilds.cache.size} guilds.`))
+                    .catch(client.logger.error);
             });
         }
         else {
-            console.log('Running in production mode. Commands are bot-wide.');
+            client.logger.info('Running in production mode. Commands are bot-wide.');
             rest.put(Routes.applicationCommands(process.env.CLIENTID), { body: c })
-                .then(() => console.log(`Successfully registered ${c.length} application commands.`))
-                .catch(console.error);
+                .then(() => client.logger.info(`Successfully registered ${c.length} application commands.`))
+                .catch(client.logger.error);
         }
 
-        console.log(`Successfully reloaded ${c.length} application (/) commands.`);
+        client.logger.info(`Successfully reloaded ${c.length} application (/) commands.`);
 	}
     catch (error) {
-		console.error(error);
+		client.logger.error(error);
     }
 });
 
 client.login(process.env.TOKEN);
 
-client.on('error', console.error);
+client.on('debug', m => client.logger.debug(m));
+client.on('warn', m => client.logger.warn(m));
+client.on('error', m => client.logger.error(m));
