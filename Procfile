@@ -1,2 +1,2 @@
-worker: npm start:prod
-web: echo "web"
+worker: npm run start:prod
+web: 0
