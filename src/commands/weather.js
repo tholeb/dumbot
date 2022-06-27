@@ -12,6 +12,8 @@ const chartExporter = require('highcharts-export-server');
 
 const { time } = require('@discordjs/builders');
 
+const Pager = require('../utils/Pager');
+
 // types: https://discordjs.guide/interactions/slash-commands.html#option-types
 
 module.exports = {
@@ -154,8 +156,6 @@ module.exports = {
             },
         ]);
 
-        // Reply with the fist embed
-        await interaction.editReply({ embeds: [embeds[page]], components: [getButtons(page, list.length), mapLink], files: [image] });
 
         // Button interaction
         const collector = interaction.channel.createMessageComponentCollector({ time: 60000 });
@@ -165,11 +165,11 @@ module.exports = {
             switch (i.customId) {
                 case 'previous':
                     page--;
-                    await interaction.editReply({ embeds: [embeds[page]], components: [getButtons(page, list.length), mapLink] });
+                    await interaction.editReply({ embeds: [embeds[page]], components: [Pager(page, list.length), mapLink] });
                     break;
-                case 'next':
-                    page++;
-                    await interaction.editReply({ embeds: [embeds[page]], components: [getButtons(page, list.length), mapLink] });
+                    case 'next':
+                        page++;
+                    await interaction.editReply({ embeds: [embeds[page]], components: [Pager(page, list.length), mapLink] });
                 break;
             }
         });
@@ -178,6 +178,8 @@ module.exports = {
             interaction.editReply({ content: `Délai d'attente dépassé (Vous avez tourné ${collected.length} pages).`, components: [mapLink] });
         });
 
+        // Reply with the fist embed
+        return interaction.editReply({ embeds: [embeds[page]], components: [Pager(page, list.length), mapLink], files: [image] });
     },
     async autoComplete(client, interaction) {
         const location = interaction.options.getString('location');
@@ -215,7 +217,7 @@ module.exports = {
     },
 };
 
-const makeEmbed = async (item, city, locale, user, page, maxPage) => {
+const makeEmbed = async (item, city, locale, user, index, length) => {
     const palette = await Vibrant.from(`https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`).getPalette((err, p) => p);
 
     const cardinals = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
@@ -231,7 +233,7 @@ const makeEmbed = async (item, city, locale, user, page, maxPage) => {
         // description: `${item.weather[0].description}`,
         author: {
             name: `${user.username}#${user.discriminator}`,
-            icon_url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
+            icon_url: user.avatarURL(),
         },
         thumbnail: {
             url: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
@@ -287,27 +289,8 @@ const makeEmbed = async (item, city, locale, user, page, maxPage) => {
             },
         ],
         footer: {
-            text: `Page ${page + 1}/${maxPage + 1} • Source: OpenWeatherMap`,
+            text: `Page ${index + 1}/${length + 1} • Source: OpenWeatherMap`,
         },
     });
 
-};
-
-const getButtons = (page, maxPage) => {
-    return new MessageActionRow().addComponents([
-        {
-            type: 'BUTTON',
-            style: 'PRIMARY',
-            customId: 'previous',
-            label: '❮',
-            disabled: page == 0,
-        },
-        {
-            type: 'BUTTON',
-            style: 'PRIMARY',
-            customId: 'next',
-            label: '❯',
-            disabled : page == maxPage - 1,
-        },
-    ]);
 };
