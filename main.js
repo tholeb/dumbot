@@ -60,6 +60,8 @@ client.once('ready', async () => {
                 rest.put(Routes.applicationGuildCommands(client.user.id, g.id), { body: c })
                     .then(() => client.logger.info(`Successfully registered ${c.length} application commands for ${client.guilds.cache.size} guilds.`))
                     .catch(client.logger.error);
+                rest.put(Routes.applicationCommands(client.user.id), { body: [] })
+                    .catch(client.logger.error);
             });
         }
         else {
