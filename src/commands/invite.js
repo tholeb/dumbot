@@ -1,9 +1,8 @@
-const { SlashCommandBuilder, hyperlink } = require('@discordjs/builders');
-
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('invite')
-		.setDescription('Replies with the invitation link to invite this bot to your server!'),
+	data: {
+		name: 'invite',
+		description: 'Invite the bot to your server',
+	},
     async execute(client, interaction) {
 		const embed = {
 			thumbnail: {

@@ -1,10 +1,10 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('ping')
-		.setDescription('Replies with Pong!'),
+	data: {
+		name: 'ping',
+		description: 'Pong!',
+	},
     async execute(client, interaction) {
         const ping = new MessageEmbed()
 		.setColor('RANDOM')
