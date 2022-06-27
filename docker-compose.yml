@@ -1,0 +1,6 @@
+---
+environment:
+  TOKEN: ""
+  OWN_API_KEY: ""
+  ACCEPT_HIGHCHARTS_LICENSE: "YES"
+  HIGHCHARTS_VERSION: 4.2.2
