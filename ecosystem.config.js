@@ -10,6 +10,13 @@ module.exports = {
 			],
 			autorestart: true,
 			restart_delay: 3000,
+			env_production: {
+				TOKEN: '',
+				OWM_API_KEY: '',
+
+				ACCEPT_HIGHCHARTS_LICENSE: 'YES',
+				HIGHCHARTS_VERSION: '4.2.2',
+			},
 		},
 	],
 	deploy : {
