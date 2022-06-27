@@ -228,7 +228,7 @@ const makeEmbed = async (item, city, locale, user, page, maxPage) => {
     return new MessageEmbed({
         color: palette.Vibrant._rgb,
         title: `BULLETIN MÉTÉOROLOGIQUE\n${time(datetime, 'f')}`,
-        description: `${item.weather[0].description}`,
+        // description: `${item.weather[0].description}`,
         author: {
             name: `${user.username}#${user.discriminator}`,
             icon_url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
