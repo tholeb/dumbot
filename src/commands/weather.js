@@ -119,68 +119,64 @@ module.exports = {
 
         // Filename of the output
         const outputFile = './assets/weatherChart.png';
-        new Promise((resolve) => {
-            chartExporter.export(chartDetails, (err, res) => {
+        await chartExporter.export(chartDetails, (err, res) => {
 
-                // Get the image data (base64)
-                const imageb64 = res.data;
+			// Get the image data (base64)
+            const imageb64 = res.data;
 
-                // Save the image to file
-                fs.writeFileSync(outputFile, imageb64, 'base64', function(err) {
-                    if (err) client.logger.info(err);
-                });
-
-                chartExporter.killPool();
-                resolve();
-            });
-        }).then(async () => {
-            const image = new MessageAttachment(outputFile);
-
-            const city = response.data.city;
-
-            const list = response.data.list.filter((v, i) => i % 4 == 0);
-
-            // Make all the embeds
-            const embeds = await Promise.all(list.map((i, k) => {
-                return makeEmbed(i, city, interaction.locale, interaction.user, k, list.length - 1);
-            }));
-
-            let page = 0;
-
-            const mapLink = new MessageActionRow().addComponents([
-                {
-                    type: 'BUTTON',
-                    style: 'LINK',
-                    url: `https://www.windy.com/?${city.coord.lat},${city.coord.lon},9`,
-                    label: 'Carte météorologique',
-                },
-            ]);
-
-            // Reply with the fist embed
-            await interaction.editReply({ embeds: [embeds[page]], components: [getButtons(page, list.length), mapLink], files: [image] });
-
-            // Button interaction
-            const collector = interaction.channel.createMessageComponentCollector({ time: 60000 });
-
-            collector.on('collect', async i => {
-                await i.deferUpdate();
-                switch (i.customId) {
-                    case 'previous':
-                        page--;
-                        await interaction.editReply({ embeds: [embeds[page]], components: [getButtons(page, list.length), mapLink] });
-                        break;
-                    case 'next':
-                        page++;
-                        await interaction.editReply({ embeds: [embeds[page]], components: [getButtons(page, list.length), mapLink] });
-                    break;
-                }
+			// Save the image to file
+			fs.writeFileSync(outputFile, imageb64, 'base64', function(err) {
+				if (err) client.logger.info(err);
             });
 
-            collector.on('end', collected => {
-                interaction.editReply({ content: `Délai d'attente dépassé (Vous avez tourné ${collected.length} pages).`, components: [mapLink] });
-            });
+            chartExporter.killPool();
         });
 
+        const image = new MessageAttachment(outputFile);
+
+        const city = response.data.city;
+
+        const list = response.data.list.filter((v, i) => i % 4 == 0);
+
+        // Make all the embeds
+        const embeds = await Promise.all(list.map((i, k) => {
+            return makeEmbed(i, city, interaction.locale, interaction.user, k, list.length - 1);
+        }));
+
+        let page = 0;
+
+        const mapLink = new MessageActionRow().addComponents([
+            {
+                type: 'BUTTON',
+                style: 'LINK',
+                url: `https://www.windy.com/?${city.coord.lat},${city.coord.lon},9`,
+                label: 'Carte météorologique',
+            },
+        ]);
+
+        // Reply with the fist embed
+        await interaction.editReply({ embeds: [embeds[page]], components: [getButtons(page, list.length), mapLink], files: [image] });
+
+        // Button interaction
+        const collector = interaction.channel.createMessageComponentCollector({ time: 60000 });
+
+        collector.on('collect', async i => {
+            await i.deferUpdate();
+            switch (i.customId) {
+                case 'previous':
+                    page--;
+                    await interaction.editReply({ embeds: [embeds[page]], components: [getButtons(page, list.length), mapLink] });
+                    break;
+                case 'next':
+                    page++;
+                    await interaction.editReply({ embeds: [embeds[page]], components: [getButtons(page, list.length), mapLink] });
+                break;
+            }
+        });
+
+        collector.on('end', collected => {
+            interaction.editReply({ content: `Délai d'attente dépassé (Vous avez tourné ${collected.length} pages).`, components: [mapLink] });
+        });
 
     },
     async autoComplete(client, interaction) {
