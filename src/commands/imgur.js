@@ -146,6 +146,6 @@ module.exports = {
 		pager.run(imgurLinks);
 
 
-		return interaction.editReply({ embeds: [embeds[page]], components: [pager.makeButton()] });
+		return interaction.editReply({ embeds: [embeds[page]], components: [pager.makeButton(), imgurLinks] });
 	},
 };

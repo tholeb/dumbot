@@ -13,7 +13,7 @@ module.exports = class Pager {
      * Run the pager collector
      * @param  {} extraButtons if you want to add extra buttons
      */
-    run(extraButtons) {
+    run(extraButtons = null) {
         const collector = this.interaction.channel.createMessageComponentCollector({ time: 60000 });
 
         collector.on('collect', async i => {
@@ -21,11 +21,11 @@ module.exports = class Pager {
             switch (i.customId) {
                 case 'previous':
                     this.index--;
-                    await this.interaction.editReply({ embeds: [this.embeds[this.index]], components: [this.makeButton()] });
+                    await this.interaction.editReply({ embeds: [this.embeds[this.index]], components: [this.makeButton(), extraButtons] });
                 break;
                 case 'next':
                     this.index++;
-                    await this.interaction.editReply({ embeds: [this.embeds[this.index]], components: [this.makeButton()] });
+                    await this.interaction.editReply({ embeds: [this.embeds[this.index]], components: [this.makeButton(), extraButtons] });
                 break;
                 }
         });
