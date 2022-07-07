@@ -40,13 +40,13 @@ module.exports = {
 		await interaction.deferReply();
 		const album = interaction.options.getString('album');
 
-		if (!album.startsWith('https://imgur.com/a/')) {
+		if (!album.startsWith('https://imgur.com/')) {
 			const embed = {
 				title: 'Error',
 				description: 'The album url is not valid',
 				color: 0xFF0000,
 			};
-			return interaction.reply({ embed: [embed] });
+			return interaction.editReply({ embed: [embed] });
 		}
 
 
@@ -60,13 +60,80 @@ module.exports = {
             await interaction.editReply(err.response.data.message);
 		});
 
-		const images = response.data.data.images;
+		console.log(response);
 
-		const embeds = await Promise.all(images.map((i, k) => {
-			return makeEmbed(i, interaction.user, k, images.length - 1);
+		const format = ['image/png', 'image/jpeg', 'image/gif', 'image/*'];
+
+		const images = response.data.data.images.filter((i) => format.includes(i.type));
+
+		const embeds = await Promise.all(images.map(async (image, k) => {
+			const palette = await Vibrant.from(image.link).getPalette((err, p) => p);
+
+			return new MessageEmbed({
+				color: palette.Vibrant._rgb,
+				title: response.data.data.title,
+				description: response.data.data.description ||= '',
+				url: response.data.data.link,
+				author: {
+					name: `${interaction.user.username}#${interaction.user.discriminator}`,
+					icon_url: interaction.user.avatarURL(),
+				},
+				thumbnail: {
+					url: 'https://sunrust.org/wiki/images/f/fc/Imgur_icon.png',
+				},
+				image: {
+					url: image.link,
+				},
+				fields: [
+					{
+						name: 'Title',
+						value: image.title ||= 'No title',
+						inline: true,
+					},
+					{
+						name: 'Description',
+						value: image.description ||= 'No description',
+						inline: true,
+					},
+					{
+						name: 'Ratio',
+						value: `${image.width}x${image.height}`,
+						inline: true,
+					},
+					{
+						name: 'Size',
+						value: humanFileSize(image.size) || 'No size',
+						inline: true,
+					},
+					{
+						name: 'NSFW',
+						value: image.nsfw ? 'Yes' : 'No',
+						inline: true,
+					},
+					{
+						name: 'Views',
+						value: `${image.views}` || 'No views',
+						inline: true,
+					},
+					{
+						name: 'Link',
+						value: `${image.link}`,
+						inline: true,
+					},
+					{
+						name: 'Tags',
+						value: image.tags.join(', ') || 'No tags',
+						inline: true,
+					},
+				],
+				footer: {
+					text: `Page ${k + 1}/${images.length + 1}`,
+				},
+				timestamp: new Date(image.datetime * 1000).toISOString(),
+			});
 		}));
 
-		let page = 0;
+		const page = 0;
 
 		const imgurLinks = new MessageActionRow().addComponents([
             {
@@ -75,92 +142,12 @@ module.exports = {
                 url: response.data.data.link,
                 label: 'Album\'s link',
             },
-        ]);
+		]);
+
+		const pager = new Pager(interaction, embeds, page);
+		pager.run(imgurLinks);
 
 
-		// Button interaction
-        const collector = interaction.channel.createMessageComponentCollector({ time: 60000 });
-
-        collector.on('collect', async i => {
-            await i.deferUpdate();
-            switch (i.customId) {
-				case 'previous':
-					page--;
-                    await interaction.editReply({ embeds: [embeds[page]], components: [Pager(page, images.length), imgurLinks] });
-                    break;
-					case 'next':
-						page++;
-						await interaction.editReply({ embeds: [embeds[page]], components: [Pager(page, images.length), imgurLinks] });
-						break;
-					}
-        });
-
-        collector.on('end', collected => {
-			interaction.editReply({ content: `Délai d'attente dépassé (Vous avez tourné ${collected.length} pages).`, components: [imgurLinks] });
-        });
-
-		return interaction.editReply({ embeds: [embeds[page]], components: [Pager(page, images.length), imgurLinks] });
+		return interaction.editReply({ embeds: [embeds[page]], components: [pager.makeButton()] });
 	},
-};
-
-const makeEmbed = async (image, user, index, length) => {
-	const palette = await Vibrant.from(image.link).getPalette((err, p) => p);
-
-	return new MessageEmbed({
-        color: palette.Vibrant._rgb,
-        title: 'My album title',
-		description: 'My album description',
-		url: image.link,
-        author: {
-            name: `${user.username}#${user.discriminator}`,
-            icon_url: user.avatarURL(),
-		},
-		thumbnail: {
-			url: 'https://sunrust.org/wiki/images/f/fc/Imgur_icon.png',
-		},
-        image: {
-            url: image.link,
-        },
-		fields: [
-			{
-				name: 'Title',
-				value: image.title ||= 'No title',
-				inline: true,
-			},
-			{
-				name: 'Description',
-				value: image.description ||= 'No description',
-				inline: true,
-			},
-			{
-				name: 'Ratio',
-				value: `${image.width}x${image.height}`,
-				inline: true,
-			},
-			{
-				name: 'Size',
-				value: humanFileSize(image.size) || 'No size',
-				inline: true,
-			},
-			{
-				name: 'NSFW',
-				value: image.nsfw ? 'Yes' : 'No',
-				inline: true,
-			},
-			{
-				name: 'Views',
-				value: `${image.views}` || 'No views',
-				inline: true,
-			},
-			{
-				name: 'Tags',
-				value: image.tags.join(', ') || 'No tags',
-				inline: true,
-			},
-		],
-        footer: {
-            text: `Page ${index + 1}/${length + 1}`,
-		},
-		timestamp: new Date(image.datetime * 1000).toISOString(),
-    });
 };
