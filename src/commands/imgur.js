@@ -60,8 +60,6 @@ module.exports = {
             await interaction.editReply(err.response.data.message);
 		});
 
-		console.log(response);
-
 		const format = ['image/png', 'image/jpeg', 'image/gif', 'image/*'];
 
 		const images = response.data.data.images.filter((i) => format.includes(i.type));
