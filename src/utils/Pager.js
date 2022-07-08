@@ -31,7 +31,7 @@ module.exports = class Pager {
         });
 
         collector.on('end', collected => {
-            this.interaction.editReply({ content: `Délai d'attente dépassé (Vous avez tourné ${collected.length} pages).`, components: [extraButtons] });
+            this.interaction.editReply({ content: `Délai d'attente dépassé (Vous avez tourné ${collected.size} pages).`, components: [extraButtons] });
         });
     }
 
