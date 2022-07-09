@@ -1,15 +1,18 @@
+# Changelog
+
+Track all the changes for this project
+
 <a name="unreleased"></a>
+
 ## [Unreleased]
 
 
 <a name="v-0.0.3-alpha"></a>
-## [v-0.0.3-alpha] - 2022-07-09
+
+## [v-0.0.3-alpha] - 2022-07-10
+
 ### Add
-- v0.0.3-alpha changelog
-- changelog using git-chglog
-- changelog
-- changelog
-- config editor
+
 - git hooks for conventionnal commit messages
 - conventionnal commit message
 - imgur command
@@ -18,15 +21,19 @@
 - imgur command
 - pager buttons and collector
 
+### Feat
+
+- bot presence
+
 ### Fix
-- bad package version
+
 - undefined size
 - extra buttons not showing up
 - undefined hyperlink
 
 ### Ref
-- prepare for v0.0.3-alpha
-- changelog content
+
+- changelog config
 - remove response log
 - embed to object
 - pager to util, makeEmbed args, avatar url
@@ -35,8 +42,11 @@
 
 
 <a name="v-0.0.2-alpha"></a>
+
 ## [v-0.0.2-alpha] - 2022-06-27
+
 ### Add
+
 - proper readme
 - docker support
 - env vars to pm2 config
@@ -45,14 +55,17 @@
 - procfile for heroku app
 
 ### Bump
+
 - discord-api-types
 
 ### Fix
+
 - bad scopes
 - missing run
 - bad permissions
 
 ### Ref
+
 - promisified chartExporter
 - npm command on procfile
 - remove pipe for heroku
@@ -60,8 +73,11 @@
 
 
 <a name="v-0.0.1-alpha"></a>
+
 ## v-0.0.1-alpha - 2022-06-26
+
 ### Add
+
 - path to ssh key
 - pm2 config file
 - invite command
@@ -79,14 +95,17 @@
 - basic bot with interactions
 
 ### Fix
+
 - wrong path
 - eslint cmd not found
 - useless escape
 
 ### Npm
+
 - update package versions
 
 ### Ref
+
 - key name and path
 - devel to development
 - use logger and chart details location
