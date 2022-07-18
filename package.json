@@ -17,7 +17,7 @@
         "pino-multi-stream": "^6.0.0"
     },
     "devDependencies": {
-        "eslint": "^8.18.0",
+        "eslint": "^8.20.0",
         "pino-pretty": "^8.1.0"
     },
     "scripts": {
