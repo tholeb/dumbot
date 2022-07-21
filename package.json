@@ -13,7 +13,7 @@
         "dotenv": "^16.0.1",
         "highcharts-export-server": "^2.1.0",
         "node-vibrant": "^3.2.1-alpha.1",
-        "pino": "^8.1.0",
+        "pino": "^8.3.0",
         "pino-multi-stream": "^6.0.0"
     },
     "devDependencies": {
